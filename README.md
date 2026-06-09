@@ -131,20 +131,6 @@ Also fits:
 - AI Native Apps
 - Student Innovation
 
-## Why RoadSense AI Wins
-
-Most apps stop at maps or dashboards. RoadSense AI closes the loop:
-
-1. Predict danger.
-2. Warn the driver.
-3. Verify citizen reports.
-4. Score severity.
-5. Generate repair notice.
-6. Track government accountability.
-7. Show lives saved.
-
-RoadSense AI turns road danger into action.
-
 ## Future Enhancements — When Data & Tech Becomes Available
 
 ### Phase 1 — iRAD Real-Time API
