@@ -8,6 +8,12 @@ Google Maps helps people reach faster. RoadSense AI helps people reach alive.
 
 RoadSense AI is not another navigation app. It is a road safety layer for India that combines accident risk prediction, accessibility-first driver alerts, community hazard verification, legal repair notices, and public accountability tracking.
 
+## Deployment Links
+
+- Frontend: [https://roadsense-ai-live.vercel.app](https://roadsense-ai-live.vercel.app)
+- Backend API: [https://roadsense-ai-backend-production.up.railway.app](https://roadsense-ai-backend-production.up.railway.app)
+- Backend health check: [https://roadsense-ai-backend-production.up.railway.app/health](https://roadsense-ai-backend-production.up.railway.app/health)
+
 ## Key Features
 
 - **Dashboard**: live black spot map, death ticker, risk KPIs, NH-48 91% risk demo.
