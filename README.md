@@ -39,18 +39,6 @@ RoadSense AI is not another navigation app. It is a road safety layer for India 
 - ML: scikit-learn GradientBoostingRegressor
 - AI: Groq API
 
-## Environment Variables
-
-Create `.env` in the project root:
-
-```bash
-GROQ_API_KEY=your_groq_key
-GROQ_MODEL=llama-3.3-70b-versatile
-VITE_API_BASE=http://localhost:8000
-```
-
-No map API key is required. Do not add a `VITE_` Groq key because Vite variables are visible in browser code.
-
 ## Install
 
 ```bash
@@ -63,7 +51,7 @@ python3 -m pip install -r backend/requirements.txt
 Backend:
 
 ```bash
-python3 -m uvicorn backend.main:app --host 127.0.0.1 --port 8000 --env-file .env
+python3 -m uvicorn backend.main:app --host 127.0.0.1 --port 8000
 ```
 
 Frontend:
