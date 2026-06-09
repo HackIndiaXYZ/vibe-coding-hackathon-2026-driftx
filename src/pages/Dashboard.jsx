@@ -24,15 +24,15 @@ export default function Dashboard({ selectedSpot, setSelectedSpot, setActive, de
   return (
     <div className="app-container space-y-5 pb-8">
       <section className="modern-card overflow-hidden p-5 sm:p-6">
-        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="grid gap-6 2xl:grid-cols-[minmax(0,1fr)_360px]">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full border border-danger/25 bg-danger/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-danger">
               <span className="h-2 w-2 animate-pulse rounded-full bg-danger" /> India road safety OS
             </div>
-            <h1 className="mt-4 max-w-4xl text-3xl font-black leading-tight text-white sm:text-4xl lg:text-5xl">
+            <h1 className="mt-4 max-w-5xl text-3xl font-black leading-[1.08] text-white [text-wrap:balance] sm:text-4xl lg:text-5xl">
               Predict road danger. Warn drivers. Verify hazards. Force repairs.
             </h1>
-            <p className="mt-4 max-w-3xl text-base leading-7 text-slate-400">
+            <p className="mt-4 max-w-3xl text-base leading-7 text-slate-300">
               RoadSense AI is an accident pre-crime and accountability layer for India: built for riders, citizens, fleets, and public works teams.
             </p>
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
@@ -44,7 +44,7 @@ export default function Dashboard({ selectedSpot, setSelectedSpot, setActive, de
               </button>
             </div>
           </div>
-          <div className="rounded-[24px] border border-white/10 bg-[#071222] p-4">
+          <div className="rounded-[24px] border border-white/10 bg-[#071222] p-4 2xl:max-w-[360px]">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-black uppercase tracking-[0.12em] text-slate-500">Live case</p>

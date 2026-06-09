@@ -53,7 +53,7 @@ export default function Navbar({ tabs, active, setActive }) {
 
   return (
     <>
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 border-r border-white/10 bg-[#0A0F1E]/92 px-4 py-5 backdrop-blur-xl lg:block">
+      <aside className="fixed inset-y-0 left-0 z-50 hidden w-64 border-r border-white/10 bg-[#0A0F1E]/96 px-4 py-5 shadow-[18px_0_60px_rgba(0,0,0,0.35)] backdrop-blur-xl lg:block">
         <Brand setActive={setActive} />
         <div className="mt-6 rounded-3xl border border-white/10 bg-white/[0.035] p-3">
           <div className="flex items-center gap-2 px-2 pb-3 text-[11px] font-bold uppercase tracking-[0.08em] text-slate-500">
@@ -70,15 +70,15 @@ export default function Navbar({ tabs, active, setActive }) {
         </div>
       </aside>
 
-      <header className="fixed inset-x-0 top-0 z-40 h-16 border-b border-white/10 bg-[#0A0F1E]/88 backdrop-blur-xl lg:left-64">
+      <header className="fixed inset-x-0 top-0 z-50 h-16 border-b border-white/12 bg-[#0A0F1E]/96 shadow-[0_12px_36px_rgba(0,0,0,0.28)] backdrop-blur-xl lg:left-64">
         <div className="flex h-full items-center justify-between px-4 sm:px-6">
           <div className="flex items-center gap-3 lg:hidden">
             <button className="grid h-11 w-11 place-items-center rounded-2xl border border-white/10 bg-white/5" onClick={() => setOpen(!open)} aria-label="Toggle menu"><Menu size={20} /></button>
             <Brand compact={false} setActive={setActive} />
           </div>
           <div className="hidden min-w-0 lg:block">
-            <p className="text-sm font-bold text-slate-400">RoadSense AI</p>
-            <h1 className="truncate text-xl font-black text-white">{active}</h1>
+            <p className="text-[11px] font-black uppercase tracking-[0.12em] text-danger">RoadSense AI Command Center</p>
+            <h1 className="truncate text-2xl font-black leading-7 text-white drop-shadow-[0_1px_10px_rgba(255,255,255,0.12)]">{active}</h1>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
             <span className="hidden items-center gap-2 rounded-full border border-danger/30 bg-danger/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-danger sm:flex"><span className="h-2 w-2 animate-pulse rounded-full bg-danger" />LIVE</span>
