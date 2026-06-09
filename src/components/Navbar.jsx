@@ -14,12 +14,12 @@ const iconMap = {
 
 function Brand({ compact = false, setActive }) {
   return (
-    <button className="flex h-11 items-center gap-3" onClick={() => setActive('Dashboard')} aria-label="RoadSense dashboard">
-      <span className="relative grid h-9 w-9 place-items-center rounded-2xl bg-danger shadow-[0_0_24px_rgba(255,45,45,0.45)]">
+    <button className="flex h-11 min-w-0 items-center gap-3" onClick={() => setActive('Dashboard')} aria-label="RoadSense dashboard">
+      <span className="relative grid h-9 w-9 shrink-0 place-items-center rounded-2xl bg-danger shadow-[0_0_24px_rgba(255,45,45,0.45)]">
         <span className="absolute h-9 w-9 animate-ping rounded-2xl bg-danger/35" />
         <Radio size={18} className="relative" />
       </span>
-      {!compact && <span className="text-lg font-black tracking-normal">RoadSense <span className="text-danger">AI</span></span>}
+      {!compact && <span className="min-w-0 truncate whitespace-nowrap text-base font-black tracking-normal sm:text-lg">RoadSense <span className="text-danger">AI</span></span>}
     </button>
   );
 }
@@ -71,18 +71,18 @@ export default function Navbar({ tabs, active, setActive }) {
       </aside>
 
       <header className="fixed inset-x-0 top-0 z-50 h-16 border-b border-white/12 bg-[#0A0F1E]/96 shadow-[0_12px_36px_rgba(0,0,0,0.28)] backdrop-blur-xl lg:left-64">
-        <div className="flex h-full items-center justify-between px-4 sm:px-6">
-          <div className="flex items-center gap-3 lg:hidden">
-            <button className="grid h-11 w-11 place-items-center rounded-2xl border border-white/10 bg-white/5" onClick={() => setOpen(!open)} aria-label="Toggle menu"><Menu size={20} /></button>
+        <div className="flex h-full items-center justify-between gap-3 px-3 sm:px-5">
+          <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3 lg:hidden">
+            <button className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl border border-white/10 bg-white/5" onClick={() => setOpen(!open)} aria-label="Toggle menu"><Menu size={20} /></button>
             <Brand compact={false} setActive={setActive} />
           </div>
           <div className="hidden min-w-0 lg:block">
             <p className="text-[11px] font-black uppercase tracking-[0.12em] text-danger">RoadSense AI Command Center</p>
             <h1 className="truncate text-2xl font-black leading-7 text-white drop-shadow-[0_1px_10px_rgba(255,255,255,0.12)]">{active}</h1>
           </div>
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
             <span className="hidden items-center gap-2 rounded-full border border-danger/30 bg-danger/10 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.08em] text-danger sm:flex"><span className="h-2 w-2 animate-pulse rounded-full bg-danger" />LIVE</span>
-            <span className="rounded-full border border-white/10 bg-white/5 px-3 py-2 font-mono text-xs text-slate-300 sm:text-sm">{clock} IST</span>
+            <span className="hidden rounded-full border border-white/10 bg-white/5 px-3 py-2 font-mono text-xs text-slate-300 min-[520px]:inline-block sm:text-sm">{clock} IST</span>
             <button onClick={() => window.dispatchEvent(new Event('roadsense-demo'))} className="hidden h-11 rounded-2xl border border-white/10 bg-white/5 px-4 text-sm font-bold text-white transition hover:border-danger/50 hover:bg-danger/10 md:block">Demo Mode</button>
             <button className="grid h-11 w-11 place-items-center rounded-2xl border border-white/10 bg-white/5 text-slate-300" aria-label="Notifications"><Bell size={18} /></button>
           </div>
