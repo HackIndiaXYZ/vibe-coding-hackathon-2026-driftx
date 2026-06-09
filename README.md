@@ -40,11 +40,10 @@ Create `.env` in the project root:
 ```bash
 GROQ_API_KEY=your_groq_key
 GROQ_MODEL=llama-3.3-70b-versatile
-VITE_GROQ_API_KEY=your_groq_key
 VITE_API_BASE=http://localhost:8000
 ```
 
-No map API key is required.
+No map API key is required. Do not add a `VITE_` Groq key because Vite variables are visible in browser code.
 
 ## Install
 

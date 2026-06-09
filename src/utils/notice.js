@@ -20,40 +20,20 @@ Authorized Officer
 Ministry of Road Transport & Highways`;
 
 export async function streamGroqNotice(road, onChunk) {
-  const apiKey = import.meta.env.VITE_GROQ_API_KEY;
-  if (!apiKey) throw new Error('Missing Groq key');
-  const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+  const response = await fetch(`${import.meta.env.VITE_API_BASE || 'http://localhost:8000'}/api/notice-stream`, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({
-      model: 'llama-3.3-70b-versatile',
-      messages: [
-        { role: 'system', content: 'You are a senior government legal officer drafting official PWD repair notices under the Motor Vehicles Act 1988. Write formal, legally precise language. Include section references, penalty clauses, and 30-day compliance deadlines.' },
-        { role: 'user', content: `Generate an official PWD repair notice for Road: ${road.name} (${road.nhNumber}), Location: ${road.lat},${road.lng}, Black Spot ID: ${road.id}, Risk Score: ${road.riskScore || road.risk}%, Deaths last 3 years: ${road.deaths}, District: ${road.district}, State: ${road.state}, PWD Division: ${road.division}, Contractor: ${road.contractor}. Include MoRTH circular reference, Section 138(1) MV Act, BCCW Act penalty clause, 30-day deadline, auto-addressed to District Collector + PWD Chief Engineer.` }
-      ],
-      max_tokens: 2048,
-      stream: true
-    })
+    body: JSON.stringify(road)
   });
   if (!response.ok || !response.body) throw new Error('Groq failed');
   const reader = response.body.getReader();
   const decoder = new TextDecoder();
-  let buffer = '';
   for (;;) {
     const { value, done } = await reader.read();
     if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split('\n');
-    buffer = lines.pop() || '';
-    for (const line of lines) {
-      const trimmed = line.replace(/^data:\s*/, '').trim();
-      if (!trimmed || trimmed === '[DONE]') continue;
-      const parsed = JSON.parse(trimmed);
-      const content = parsed.choices?.[0]?.delta?.content || '';
-      if (content) onChunk(content);
-    }
+    const content = decoder.decode(value, { stream: true });
+    if (content) onChunk(content);
   }
 }

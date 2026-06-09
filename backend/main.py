@@ -58,6 +58,26 @@ class CommunityReportRequest(BaseModel):
     imageData: str | None = None
 
 
+class NoticeAIRequest(BaseModel):
+    name: str
+    nhNumber: str = ""
+    id: str
+    lat: float | None = None
+    lng: float | None = None
+    riskScore: int | None = None
+    risk: int = 55
+    deaths: int
+    district: str
+    state: str
+    division: str = ""
+    contractor: str = ""
+
+
+class LandmarkRequest(BaseModel):
+    name: str
+    district: str = ""
+
+
 def severity_from_score(score: int):
     if score >= 75:
         return "High"
@@ -193,6 +213,30 @@ def fallback_safety_explanation(payload: SafetyExplainRequest):
     }
 
 
+def fallback_notice(road: NoticeAIRequest):
+    risk_score = road.riskScore or road.risk
+    return f"""To,
+The District Collector, {road.district}
+The Chief Engineer, Public Works Department, {road.state}
+
+Subject: Emergency repair notice for notified road black spot {road.id} on {road.name} under Section 138(1), Motor Vehicles Act, 1988.
+
+Sir/Madam,
+
+RoadSense AI has identified {road.name} ({road.nhNumber}) as a critical accident-prone black spot with a {risk_score}% probability of severe crash occurrence in the next 48 hours. The location has recorded {road.deaths} deaths in the last three years and requires immediate engineering intervention.
+
+You are hereby directed to complete black spot rectification including crash barriers, rumble strips, lane marking, illumination, speed calming, drainage correction, and warning signage within 30 days of receipt of this notice.
+
+This notice refers to MoRTH black spot rectification circulars, Section 138(1) of the Motor Vehicles Act, 1988, and applicable contractor accountability provisions under the Building and Other Construction Workers framework. Failure to comply may trigger recovery of public loss, contractor penalty proceedings, and escalation to the State Road Safety Council.
+
+Contractor on record: {road.contractor or 'PWD empanelled contractor'}.
+
+Issued for immediate compliance.
+
+Authorized Officer
+Ministry of Road Transport & Highways"""
+
+
 def parse_json_object(text: str):
     start = text.find("{")
     end = text.rfind("}")
@@ -258,9 +302,117 @@ def predict_risk(payload: RiskRequest):
     return {"riskScore": score, **risk_model.metadata}
 
 
+@app.get("/health")
+def health():
+    return {"status": "ok", "service": "roadsense-ai"}
+
+
 @app.get("/api/model-metadata")
 def model_metadata():
     return risk_model.metadata
+
+
+@app.post("/api/notice-stream")
+def notice_stream(payload: NoticeAIRequest):
+    api_key = os.getenv("GROQ_API_KEY")
+    model = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+    fallback = fallback_notice(payload)
+
+    def fallback_generator():
+        for index in range(0, len(fallback), 12):
+            yield fallback[index : index + 12]
+
+    if not api_key:
+        return StreamingResponse(fallback_generator(), media_type="text/plain")
+
+    body = {
+        "model": model,
+        "messages": [
+            {
+                "role": "system",
+                "content": (
+                    "You are a senior government legal officer drafting official PWD repair notices "
+                    "under the Motor Vehicles Act 1988. Write formal, legally precise language. "
+                    "Include section references, penalty clauses, and 30-day compliance deadlines."
+                ),
+            },
+            {
+                "role": "user",
+                "content": (
+                    f"Generate an official PWD repair notice for Road: {payload.name} ({payload.nhNumber}), "
+                    f"Location: {payload.lat},{payload.lng}, Black Spot ID: {payload.id}, "
+                    f"Risk Score: {payload.riskScore or payload.risk}%, Deaths last 3 years: {payload.deaths}, "
+                    f"District: {payload.district}, State: {payload.state}, PWD Division: {payload.division}, "
+                    f"Contractor: {payload.contractor}. Include MoRTH circular reference, Section 138(1) MV Act, "
+                    "BCCW Act penalty clause, 30-day deadline, auto-addressed to District Collector + PWD Chief Engineer."
+                ),
+            },
+        ],
+        "max_tokens": 2048,
+        "stream": True,
+    }
+
+    def groq_generator():
+        request = Request(
+            "https://api.groq.com/openai/v1/chat/completions",
+            data=json.dumps(body).encode("utf-8"),
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+            },
+            method="POST",
+        )
+        try:
+            with urlopen(request, timeout=20) as response:
+                for raw_line in response:
+                    line = raw_line.decode("utf-8").strip()
+                    if not line.startswith("data:"):
+                        continue
+                    chunk = line.replace("data:", "", 1).strip()
+                    if not chunk or chunk == "[DONE]":
+                        continue
+                    parsed = json.loads(chunk)
+                    content = parsed.get("choices", [{}])[0].get("delta", {}).get("content", "")
+                    if content:
+                        yield content
+        except Exception:
+            yield fallback
+
+    return StreamingResponse(groq_generator(), media_type="text/plain")
+
+
+@app.post("/api/landmark")
+def landmark(payload: LandmarkRequest):
+    api_key = os.getenv("GROQ_API_KEY")
+    model = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
+    fallback = "पेट्रोल पंप के बाद"
+    if not api_key:
+        return {"landmark": fallback}
+    body = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": "Return one short Hindi driving landmark phrase only. No punctuation, no explanation."},
+            {"role": "user", "content": f"Generate a recognizable roadside landmark warning phrase for {payload.name}, {payload.district}, India. Example style: पेट्रोल पंप के बाद"},
+        ],
+        "max_tokens": 32,
+        "temperature": 0.2,
+    }
+    request = Request(
+        "https://api.groq.com/openai/v1/chat/completions",
+        data=json.dumps(body).encode("utf-8"),
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+        },
+        method="POST",
+    )
+    try:
+        with urlopen(request, timeout=8) as response:
+            data = json.loads(response.read().decode("utf-8"))
+        content = data["choices"][0]["message"]["content"].strip()
+        return {"landmark": content or fallback}
+    except Exception:
+        return {"landmark": fallback}
 
 
 @app.post("/api/community-report")

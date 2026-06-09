@@ -47,13 +47,12 @@ Local `.env`:
 ```bash
 GROQ_API_KEY=gsk_your_backend_groq_key
 GROQ_MODEL=llama-3.3-70b-versatile
-VITE_GROQ_API_KEY=gsk_your_frontend_groq_key
 VITE_API_BASE=http://localhost:8000
 ```
 
 Notes:
-- `GROQ_API_KEY` is used by the FastAPI backend.
-- `VITE_GROQ_API_KEY` is used by existing frontend streaming notice/landmark fallbacks.
+- `GROQ_API_KEY` is used only by the FastAPI backend.
+- Do not expose Groq as a `VITE_` variable because frontend variables are public in browser code.
 - `.env` is ignored by git.
 
 ## Main Pages
